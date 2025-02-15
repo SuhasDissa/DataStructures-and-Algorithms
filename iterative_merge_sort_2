@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void print_arr(const vector<int> &arr)
+{
+    for (int i : arr)
+    {
+        printf("%i ", i);
+    }
+}
+
+vector<int> read_arr()
+{
+    vector<int> numbers;
+    int num;
+    while (cin >> num)
+    {
+        numbers.push_back(num);
+    }
+    return numbers;
+}
+
+void merge(vector<int> &arr, vector<int> &temp, int l1, int r1, int l2, int r2)
+{
+    int i = l1;
+    int j = l2;
+    int k = l1;
+
+    while (i <= r1 && j <= r2)
+    {
+        if (arr[i] <= arr[j])
+        {
+            temp[k++] = arr[i++];
+        }
+        else
+        {
+            temp[k++] = arr[j++];
+        }
+    }
+
+    while (i <= r1)
+    {
+        temp[k++] = arr[i++];
+    }
+
+    while (j <= r2)
+    {
+        temp[k++] = arr[j++];
+    }
+
+    for (int x = l1; x <= r2; x++)
+    {
+        arr[x] = temp[x];
+    }
+}
+
+void merge_sort(vector<int> &arr)
+{
+    int n = arr.size();
+    vector<int> temp(n);
+    int len = 1;
+
+    while (len < n)
+    {
+        for (int i = 0; i < n; i += 2 * len)
+        {
+            int l1 = i;
+            int r1 = min(i + len - 1, n - 1);
+            int l2 = i + len;
+            int r2 = min(i + 2 * len - 1, n - 1);
+
+            if (l2 < n)
+            {
+                merge(arr, temp, l1, r1, l2, r2);
+            }
+        }
+        len *= 2;
+    }
+}
+
+int main()
+{
+    vector<int> arr = read_arr();
+
+    merge_sort(arr);
+    print_arr(arr);
+}

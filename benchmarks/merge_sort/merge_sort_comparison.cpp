@@ -70,80 +70,62 @@ void merge_sort(vector<int> &arr, int i, int j)
     }
 }
 
-vector<int> merge2(vector<int> arr, int l1, int r1, int l2, int r2)
+void merge2(vector<int> &arr, vector<int> &temp, int l1, int r1, int l2, int r2)
 {
-    vector<int> temp(r2 - l1 + 1);
-    int index = 0;
+    int i = l1;
+    int j = l2;
+    int k = l1;
 
-    while (l1 <= r1 && l2 <= r2)
+    while (i <= r1 && j <= r2)
     {
-        if (arr[l1] <= arr[l2])
+        if (arr[i] <= arr[j])
         {
-            temp[index] = arr[l1];
-            index++;
-            l1++;
+            temp[k++] = arr[i++];
         }
         else
         {
-            temp[index] = arr[l2];
-            index++;
-            l2++;
+            temp[k++] = arr[j++];
         }
     }
 
-    while (l1 <= r1)
+    while (i <= r1)
     {
-        temp[index] = arr[l1];
-        index++;
-        l1++;
+        temp[k++] = arr[i++];
     }
 
-    while (l2 <= r2)
+    while (j <= r2)
     {
-        temp[index] = arr[l2];
-        index++;
-        l2++;
+        temp[k++] = arr[j++];
     }
-    return temp;
+
+    for (int x = l1; x <= r2; x++)
+    {
+        arr[x] = temp[x];
+    }
 }
 
-vector<int> merge_sort2(vector<int> arr, int n)
+void merge_sort2(vector<int> &arr)
 {
+    int n = arr.size();
+    vector<int> temp(n);
     int len = 1;
 
     while (len < n)
     {
-        int i = 0;
-
-        while (i < n)
+        for (int i = 0; i < n; i += 2 * len)
         {
             int l1 = i;
-            int r1 = i + len - 1;
+            int r1 = min(i + len - 1, n - 1);
             int l2 = i + len;
-            int r2 = i + 2 * len - 1;
+            int r2 = min(i + 2 * len - 1, n - 1);
 
-            if (l2 >= n)
+            if (l2 < n)
             {
-                break;
+                merge2(arr, temp, l1, r1, l2, r2);
             }
-
-            if (r2 >= n)
-            {
-                r2 = n - 1;
-            }
-
-            auto temp = merge2(arr, l1, r1, l2, r2);
-
-            for (int j = 0; j <= r2 - l1; j++)
-            {
-                arr[i + j] = temp[j];
-            }
-
-            i = i + 2 * len;
         }
-        len = 2 * len;
+        len *= 2;
     }
-    return arr;
 }
 
 vector<int> rand_array(int size)
@@ -173,15 +155,14 @@ void recursive_merge_sort(vector<int> arr)
 
 void iterative_merge_sort(vector<int> arr)
 {
-    int n = arr.size();
-    merge_sort2(arr, n);
+    merge_sort2(arr);
 }
 
 int main(int argc, char *argv[])
 {
     vector<vector<int>> inputs;
-    int max_items = 50000;
-    int gap = 500;
+    int max_items = 10000;
+    int gap = 100;
 
     for (int i = 1; i <= max_items; i += gap)
     {
